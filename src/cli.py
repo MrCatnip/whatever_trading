@@ -52,6 +52,7 @@ def plotall():
 def get_file_name(ticker: str, timeframe: TimeframeString):
     dirname = "AlpacaData"
     os.makedirs(dirname, exist_ok=True)
+    timeframe = timeframe if '1m' not in timeframe else '1min'
     return f"{dirname}/{ticker}-{timeframe}.json"
 
 
