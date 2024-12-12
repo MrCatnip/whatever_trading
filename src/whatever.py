@@ -1,36 +1,12 @@
 from data_types import BarData, Range
 from typing import Literal, List, TypedDict
 from strategy_base import StrategyBase
-from dataclasses import dataclass
-
-SWING_LOOK_BACK = 2  # Number of bars to look back/forward for swing points
-ZONE_SIZE = 0.5  # Percentage above/below level for zone (%)
-MIN_BARS_BETWEEN = 5  # Minimum bars between touches
-MIN_DELTA = 5  # Minimum difference between resistance and support (%)
-MIN_REACTION = 1.0  # Minimum price reaction needed (%)
-INITIAL_STRENGTH = 1.0  # Starting strength of validated level
-STRENGTH_DECAY = 0.2  # Strength reduction per touch
-MIN_STRENGTH = 0.0  # Level is removed below this strength
 
 MIN_BARS_DELTA = 50
 MIN_POINTS_DISTANCE = MIN_BARS_DELTA
 MAX_POINTS_DISTANCE = 400
 MIN_ZONE_SIZE = 5 # % 
 MAX_ZONE_SIZE = 15 # % 
-
-@dataclass
-class PotentialLevel:
-    price: float
-    bar_offset: int
-
-
-@dataclass
-class ConfirmedLevel:
-    price: float
-    strength: float
-    # Don't want to check the strength for the bar where we've just validated the level
-    is_initial: bool
-
 
 class ExtremePoint(TypedDict):
     price: float
