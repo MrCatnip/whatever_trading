@@ -7,6 +7,9 @@ from data_types import BarData, TimeframeString
 from typing import List
 import os
 
+TIMEFRAMES: List[TimeframeString] = [
+    "1M", "1W", "1D", "4H", "1H", "30m", "15m", "1m"
+]
 
 @click.group()
 def cli():
@@ -16,12 +19,9 @@ def cli():
 
 @cli.command()
 def fetchall():
-    timeframes: List[TimeframeString] = [
-        "1M", "1W", "1D", "4H", "1H", "30m", "15m", "1m"
-    ]
     ticker = "BTC"
-    symbol = f"{ticker}/USD"
-    for timeframe in timeframes:
+    symbol = get_symbol(ticker)
+    for timeframe in TIMEFRAMES:
         print(f'Fetching for {symbol} - {timeframe}...')
         client = AlpacaInterface(symbol, timeframe)
         bars = client.fetch()
@@ -34,11 +34,9 @@ def fetchall():
 
 @cli.command()
 def plotall():
-    timeframes: List[TimeframeString] = [
-        "1m", "15m", "30m", "1H", "4H", "1D", "1W", "1M"]
     ticker = "BTC"
-    symbol = f"{ticker}/USD"
-    for timeframe in timeframes:
+    symbol = get_symbol(ticker)
+    for timeframe in TIMEFRAMES:
         print(f"Parsing data for {symbol} - {timeframe}...")
         file_name = get_file_name(ticker, timeframe)
         with open(file_name, "r") as file:
@@ -47,6 +45,9 @@ def plotall():
             ranges = strategy.get_historical_data(bars)
             plot_data(bars, ranges)
         print('Done!')
+
+def get_symbol(ticker):
+    return f"{ticker}/USD"
 
 
 def get_file_name(ticker: str, timeframe: TimeframeString):
