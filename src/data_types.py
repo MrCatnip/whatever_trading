@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import TypedDict, Literal
 
 
 class BarData(TypedDict):
@@ -15,3 +15,5 @@ class Range(TypedDict):
     starting_index: int
     ending_index: int
     validated_index: int
+
+TimeframeString = Literal["1m", "15m", "30m", "1H", "4H", "1D", "1W", "1M"]

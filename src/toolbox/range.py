@@ -1,6 +1,6 @@
 from data_types import BarData, Range
 from typing import Literal, List, TypedDict
-from strategy_base import StrategyBase
+from toolbox.tool_base import ToolBase
 
 LOOKBACK_PERIOD = 50 # period for higest/lowest closing price within LOOKBACK_PERIOD * 2 + 1 bars
 # min bars between closing prices forming ranges. must be at least LOOKBACK_PERIOD
@@ -19,7 +19,7 @@ class ExtremePoint(TypedDict):
 LevelType = Literal["Resistance", "Support"]
 
 
-class Whatever(StrategyBase):
+class Range(ToolBase):
     def get_latest_data(self, bars):
         return super().get_latest_data(bars)
 

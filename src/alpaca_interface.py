@@ -2,17 +2,16 @@ from alpaca.data.historical import CryptoHistoricalDataClient
 from alpaca.data.requests import CryptoBarsRequest
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 import datetime
-from typing import Literal, List
-from data_types import BarData
-
-TimeframeString = Literal["1m", "15m", "30m", "1H", "4H", "1D", "1W"]
+from dateutil.relativedelta import relativedelta
+from typing import List
+from data_types import BarData, TimeframeString
 
 # No keys required for crypto data
 client = CryptoHistoricalDataClient()
 
 
 class AlpacaInterface:
-    def __init__(self, symbol, timeframe: TimeframeString, lookbackPeriod=200):
+    def __init__(self, symbol, timeframe: TimeframeString, lookbackPeriod=0):
         self.symbol = symbol
         (self.timeframe, self.intervalMs) = self._parse_timeframe(timeframe)
         self.lookbackPeriod = lookbackPeriod
@@ -34,6 +33,8 @@ class AlpacaInterface:
                 return (TimeFrame(1, TimeFrameUnit.Day), 24 * 60 * 60 * 1000)
             case "1W":
                 return (TimeFrame(1, TimeFrameUnit.Week), 7 * 24 * 60 * 60 * 1000)
+            case "1M":
+                return (TimeFrame(1, TimeFrameUnit.Month), 0) # not needed
 
     def _get_start_date(self):
         current_utc = datetime.datetime.now(datetime.timezone.utc)
@@ -66,6 +67,13 @@ class AlpacaInterface:
                                                                   seconds=current_utc.second, microseconds=current_utc.microsecond)
                 rounded = not_so_rounded.replace(
                     hour=0, minute=0, second=0, microsecond=0)
+            case "1M":
+                # Get the first day of the current month
+                rounded = current_utc.replace(
+                    day=1, hour=0, minute=0, second=0, microsecond=0)
+                # Subtract (lookbackPeriod - 1) months
+                rounded -= relativedelta(months=self.lookbackPeriod-1)
+                return rounded
         rounded -= datetime.timedelta(milliseconds=self.intervalMs *
                                       (self.lookbackPeriod-1))
         return rounded
@@ -74,8 +82,8 @@ class AlpacaInterface:
         request_params = CryptoBarsRequest(
             symbol_or_symbols=[self.symbol],
             timeframe=self.timeframe,
-            start=self._get_start_date(),
-            limit=self.lookbackPeriod
+            start=self._get_start_date() if self.lookbackPeriod else datetime.datetime(2021, 1, 1),
+            limit=self.lookbackPeriod if self.lookbackPeriod else 20000000
         )
         bars = client.get_crypto_bars(request_params)
         data: List[BarData] = []
