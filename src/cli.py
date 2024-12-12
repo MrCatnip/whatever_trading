@@ -11,6 +11,8 @@ TIMEFRAMES: List[TimeframeString] = [
     "1M", "1W", "1D", "4H", "1H", "30m", "15m", "1m"
 ]
 
+TICKERS = ["BTC"]
+
 @click.group()
 def cli():
     """Wusup"""
@@ -27,24 +29,24 @@ def fetchall():
         bars = client.fetch()
         file_name = get_file_name(ticker, timeframe)
         with open(file_name, "w") as file:
-            # Convert each BarData instance to a dictionary before serializing
             json.dump([bar for bar in bars], file, indent=4)
         print('Done!')
 
 
 @cli.command()
 def plotall():
-    ticker = "BTC"
-    symbol = get_symbol(ticker)
-    for timeframe in TIMEFRAMES:
-        print(f"Parsing data for {symbol} - {timeframe}...")
-        file_name = get_file_name(ticker, timeframe)
-        with open(file_name, "r") as file:
-            bars: List[BarData] = json.load(file)
-            strategy = Range()
-            ranges = strategy.get_historical_data(bars)
-            plot_data(bars, ranges)
-        print('Done!')
+    for ticker in TICKERS:
+        ticker = "BTC"
+        symbol = get_symbol(ticker)
+        for timeframe in TIMEFRAMES:
+            print(f"Parsing data for {symbol} - {timeframe}...")
+            file_name = get_file_name(ticker, timeframe)
+            with open(file_name, "r") as file:
+                bars: List[BarData] = json.load(file)
+                strategy = Range()
+                ranges = strategy.get_historical_data(bars)
+                plot_data(bars, ranges)
+            print('Done!')
 
 def get_symbol(ticker):
     return f"{ticker}/USD"
