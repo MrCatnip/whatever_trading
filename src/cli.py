@@ -1,7 +1,7 @@
 import click
 from alpaca_interface import AlpacaInterface
 from viz import plot_data
-from whatever import Whatever
+from toolbox.whatever import Whatever
 import json
 from data_types import BarData
 from typing import List
@@ -22,7 +22,6 @@ def run():
     
     strategy = Whatever()
     ranges = strategy.get_historical_data(bars)
-    print(ranges)
     plot_data(bars, ranges)
 
 

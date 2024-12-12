@@ -72,7 +72,7 @@ class Whatever(StrategyBase):
         points_distance = point['index'] - point_prev['index']
         points_difference = abs(
             (point['price'] - point_prev['price']) / point['price'] * 100)
-        point_prev['index'] != 0 and points_distance >= MIN_POINTS_DISTANCE and points_distance <= MAX_POINTS_DISTANCE and points_difference >= MIN_ZONE_SIZE and points_difference <= MAX_ZONE_SIZE
+        return point_prev['index'] != 0 and points_distance >= MIN_POINTS_DISTANCE and points_distance <= MAX_POINTS_DISTANCE and points_difference >= MIN_ZONE_SIZE and points_difference <= MAX_ZONE_SIZE
 
     def __get_valid_ranges(self, bars: List[BarData], potential_ranges: List[Range], levelType: LevelType):
         valid_ranges: List[Range] = []
@@ -82,7 +82,6 @@ class Whatever(StrategyBase):
             while j < len(potential_ranges):
                 potential_range = potential_ranges[j]
                 if i > potential_range['ending_index'] + LOOKBACK_PERIOD and self.__is_valid_touch(bar, potential_range, levelType):
-                    print(i)
                     valid_ranges.append(potential_ranges.pop(j))
                     valid_ranges[-1]['validated_index'] = i
                 else:

@@ -29,9 +29,6 @@ def plot_data(bars: List[BarData], ranges: List[Range]):
         starting_index = range_item['starting_index']
         ending_index = range_item['ending_index']
         validated_index = range_item['validated_index']
-
-        print(ending_index, validated_index)
-
         # Determine rectangle color based on breach/entry price comparison
         color = 'rgba(0, 255, 0, 0.2)' if breach_price >= entry_price else 'rgba(255, 0, 0, 0.2)'
         intense_color = 'rgba(0, 255, 0, 0.3)' if breach_price >= entry_price else 'rgba(255, 0, 0, 0.3)'
