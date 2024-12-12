@@ -41,10 +41,10 @@ LevelType = Literal["Resistance", "Support"]
 
 
 class Whatever(StrategyBase):
-    def get_latest_signal(self, bars):
-        return super().get_latest_signal(bars)
+    def get_latest_data(self, bars):
+        return super().get_latest_data(bars)
 
-    def get_historical_signals(self, bars):
+    def get_historical_data(self, bars):
         potential_resistance_ranges = self.__find_potential_ranges(
             bars, 'Resistance')
         potential_support_ranges = self.__find_potential_ranges(

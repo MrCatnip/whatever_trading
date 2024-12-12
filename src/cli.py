@@ -21,7 +21,7 @@ def run():
         bars: List[BarData] = json.load(file)
     
     strategy = Whatever()
-    ranges = strategy.get_historical_signals(bars)
+    ranges = strategy.get_historical_data(bars)
     print(ranges)
     plot_data(bars, ranges)
 
