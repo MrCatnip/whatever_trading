@@ -15,9 +15,8 @@ MIN_STRENGTH = 0.0  # Level is removed below this strength
 MIN_BARS_DELTA = 50
 MIN_POINTS_DISTANCE = MIN_BARS_DELTA
 MAX_POINTS_DISTANCE = 400
-MIN_ZONE_SIZE = 5
-MAX_ZONE_SIZE = 15
-
+MIN_ZONE_SIZE = 5 # % 
+MAX_ZONE_SIZE = 15 # % 
 
 @dataclass
 class PotentialLevel:
