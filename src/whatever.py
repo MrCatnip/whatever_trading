@@ -2,11 +2,14 @@ from data_types import BarData, Range
 from typing import Literal, List, TypedDict
 from strategy_base import StrategyBase
 
-MIN_BARS_DELTA = 50
-MIN_POINTS_DISTANCE = MIN_BARS_DELTA
+LOOKBACK_PERIOD = 50 # period for higest/lowest closing price within LOOKBACK_PERIOD * 2 + 1 bars
+# min bars between closing prices forming ranges. must be at least LOOKBACK_PERIOD
+MIN_POINTS_DISTANCE = LOOKBACK_PERIOD
+# max bars between closing prices forming ranges. again, must be at least LOOKBACK_PERIOD
 MAX_POINTS_DISTANCE = 400
-MIN_ZONE_SIZE = 5 # % 
-MAX_ZONE_SIZE = 15 # % 
+MIN_ZONE_SIZE = 5  # min price difference in % between closing prices forming ranges
+MAX_ZONE_SIZE = 15  # max price difference in % between closing prices forming ranges
+
 
 class ExtremePoint(TypedDict):
     price: float
@@ -41,7 +44,7 @@ class Whatever(StrategyBase):
         point_prev = reset_point
         point = reset_point
         potential_ranges: List[Range] = []
-        for i in range(MIN_BARS_DELTA, len(bars) - MIN_BARS_DELTA):
+        for i in range(LOOKBACK_PERIOD, len(bars) - LOOKBACK_PERIOD):
             close = bars[i]['close']
             if is_more_extreme(close, point['price']):
                 point = {
@@ -51,11 +54,8 @@ class Whatever(StrategyBase):
                 right_offset = 0
             else:
                 right_offset += 1
-            if right_offset == MIN_BARS_DELTA:
-                points_distance = point['index'] - point_prev['index']
-                points_difference = abs(
-                    (point['price'] - point_prev['price']) / point['price'] * 100)
-                if point_prev['index'] != 0 and points_distance >= MIN_POINTS_DISTANCE and points_distance <= MAX_POINTS_DISTANCE and points_difference >= MIN_ZONE_SIZE and points_difference <= MAX_ZONE_SIZE:
+            if right_offset == LOOKBACK_PERIOD:
+                if self.__is__potential_range(point, point_prev):
                     potential_ranges.append({
                         'breach_price': point['price'] if is_more_extreme(point['price'], point_prev['price']) else point_prev['price'],
                         'entry_price': point['price'] if not is_more_extreme(point['price'], point_prev['price']) else point_prev['price'],
@@ -68,14 +68,20 @@ class Whatever(StrategyBase):
                 point = reset_point
         return potential_ranges
 
+    def __is__potential_range(self, point: ExtremePoint, point_prev: ExtremePoint):
+        points_distance = point['index'] - point_prev['index']
+        points_difference = abs(
+            (point['price'] - point_prev['price']) / point['price'] * 100)
+        point_prev['index'] != 0 and points_distance >= MIN_POINTS_DISTANCE and points_distance <= MAX_POINTS_DISTANCE and points_difference >= MIN_ZONE_SIZE and points_difference <= MAX_ZONE_SIZE
+
     def __get_valid_ranges(self, bars: List[BarData], potential_ranges: List[Range], levelType: LevelType):
         valid_ranges: List[Range] = []
-        for i in range(MIN_BARS_DELTA, len(bars)):
+        for i in range(LOOKBACK_PERIOD, len(bars)):
             bar = bars[i]
             j = 0
             while j < len(potential_ranges):
                 potential_range = potential_ranges[j]
-                if i > potential_range['ending_index'] + MIN_BARS_DELTA and self.__is_valid_touch(bar, potential_range, levelType):
+                if i > potential_range['ending_index'] + LOOKBACK_PERIOD and self.__is_valid_touch(bar, potential_range, levelType):
                     print(i)
                     valid_ranges.append(potential_ranges.pop(j))
                     valid_ranges[-1]['validated_index'] = i
