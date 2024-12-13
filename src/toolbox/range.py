@@ -2,7 +2,8 @@ from data_types import BarData, Range
 from typing import Literal, List, TypedDict
 from toolbox.tool_base import ToolBase
 
-LOOKBACK_PERIOD = 50 # period for higest/lowest closing price within LOOKBACK_PERIOD * 2 + 1 bars
+# period for higest/lowest closing price within LOOKBACK_PERIOD * 2 + 1 bars
+LOOKBACK_PERIOD = 50
 # min bars between closing prices forming ranges. must be at least LOOKBACK_PERIOD
 MIN_POINTS_DISTANCE = LOOKBACK_PERIOD
 # max bars between closing prices forming ranges. again, must be at least LOOKBACK_PERIOD
@@ -34,6 +35,54 @@ class Range(ToolBase):
             bars, potential_support_ranges, 'Support')
         ranges = resistance_ranges + support_ranges
         return ranges
+
+    def add_to_fig(self, fig, bars, data: List[Range] = None):
+        if not data:
+            data = self.get_historical_data(bars)
+        timestamps = [bar['timestamp'] for bar in bars]
+        # Add the base rectangle shape
+        for range_item in data:
+            breach_price = range_item['breach_price']
+            entry_price = range_item['entry_price']
+            starting_index = range_item['starting_index']
+            ending_index = range_item['ending_index']
+            validated_index = range_item['validated_index']
+            # Determine rectangle color based on breach/entry price comparison
+            color = 'rgba(0, 255, 0, 0.2)' if breach_price >= entry_price else 'rgba(255, 0, 0, 0.2)'
+            intense_color = 'rgba(0, 255, 0, 0.3)' if breach_price >= entry_price else 'rgba(255, 0, 0, 0.3)'
+            even_more_intense_color = 'rgba(0, 48, 143, 0.3)'
+            fig.add_shape(
+                type="rect",
+                x0=timestamps[starting_index],  # Start time (adjust as needed)
+                x1=timestamps[ending_index],  # End time (adjust as needed)
+                y0=min(breach_price, entry_price),  # Lower bound of the range
+                y1=max(breach_price, entry_price),  # Upper bound of the range
+                fillcolor=color,
+                line={"width": 0},  # No border
+            )
+            # Add the intense rectangle shape
+            fig.add_shape(
+                type="rect",
+                x0=timestamps[ending_index],  # Start from the ending_index
+                x1=timestamps[validated_index],  # End at the last timestamp
+                y0=min(breach_price, entry_price),  # Lower bound of the range
+                y1=max(breach_price, entry_price),  # Upper bound of the range
+                fillcolor=intense_color,
+                line={"width": 0},  # No border
+            )
+            # Add the even more intense rectangle shape
+            fig.add_shape(
+                type="rect",
+                x0=timestamps[validated_index],  # Start from the ending_index
+                x1=timestamps[-1],  # End at the last timestamp
+                y0=min(breach_price, entry_price),  # Lower bound of the range
+                y1=max(breach_price, entry_price),  # Upper bound of the range
+                fillcolor=even_more_intense_color,
+                line={"width": 0},  # No border
+            )
+
+    def get_nr_of_subplots(self):
+        return 0
 
     def __find_potential_ranges(self, bars: List[BarData], levelType: LevelType):
         reset_value = 0 if levelType == 'Resistance' else 100000000

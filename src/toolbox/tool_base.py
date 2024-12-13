@@ -1,7 +1,7 @@
 from data_types import BarData
 from typing import List
 from abc import ABC, abstractmethod
-from plotly.graph_objects import Figure
+import plotly.graph_objects as go
 
 class ToolBase(ABC):
     @abstractmethod
@@ -15,6 +15,11 @@ class ToolBase(ABC):
         pass
 
     @abstractmethod
-    def get_historical_data(self, bars: List[BarData]):
-        """Retrieve historical data."""
+    def add_to_fig(self, fig: go.Figure, bars: List[BarData], data=None):
+        """Add the stuff to the figure."""
+        pass
+
+    @abstractmethod
+    def get_nr_of_subplots(self) -> int:
+        """Returns number of expected subplots"""
         pass

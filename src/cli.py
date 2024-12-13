@@ -1,18 +1,18 @@
 import click
 from alpaca_interface import AlpacaInterface
-from viz import plot_data
-from toolbox.range import Range
+from viz import look_at_this_graph
 import json
-from data_types import BarData, TimeframeString
+from data_types import BarData, TimeframeString, ToolName
 from typing import List
 import os
 
 TIMEFRAMES: List[TimeframeString] = [
-    "1M", "1W", "1D", "4H", "1H", "30m", "15m", "1m"
+    # "1M", "1W", "1D", "4H", "1H", "30m", "15m", "1m"
+    "1D"
 ]
 TICKERS = ["BTC"]
 LOOKBACK_PERIOD = 20000
-
+TOOL_NAMES: List[ToolName] = ['Range']
 
 @click.group()
 def cli():
@@ -45,10 +45,8 @@ def plot():
             with open(file_name, "r") as file:
                 bars: List[BarData] = json.load(file)
                 bars = bars[-min(LOOKBACK_PERIOD, len(bars)):]
-                strategy = Range()
-                ranges = strategy.get_historical_data(bars)
-                plot_data(bars, ranges)
-            print('Done!')
+                look_at_this_graph(bars, symbol, timeframe, TOOL_NAMES)
+                print('Done!')
 
 
 def get_symbol(ticker):
