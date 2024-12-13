@@ -1,7 +1,10 @@
 from data_types import BarData
-from typing import List
+from typing import List, Literal, Union
 from abc import ABC, abstractmethod
 import plotly.graph_objects as go
+
+DataType = Union[Literal["Latest", "Historical"], List]
+
 
 class ToolBase(ABC):
     @abstractmethod
@@ -15,7 +18,7 @@ class ToolBase(ABC):
         pass
 
     @abstractmethod
-    def add_to_fig(self, fig: go.Figure, bars: List[BarData], data=None):
+    def add_to_fig(self, fig: go.Figure, bars: List[BarData], data_type: DataType = "Historical"):
         """Add the stuff to the figure."""
         pass
 

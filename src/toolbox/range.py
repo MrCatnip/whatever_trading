@@ -19,7 +19,6 @@ class ExtremePoint(TypedDict):
 
 LevelType = Literal["Resistance", "Support"]
 
-
 class Range(ToolBase):
     def get_latest_data(self, bars):
         return super().get_latest_data(bars)
@@ -36,9 +35,13 @@ class Range(ToolBase):
         ranges = resistance_ranges + support_ranges
         return ranges
 
-    def add_to_fig(self, fig, bars, data: List[Range] = None):
-        if not data:
+    def add_to_fig(self, fig, bars, data_type = "Historical"):
+        if data_type == "Historical":
             data = self.get_historical_data(bars)
+        elif data_type == "Latest":
+            data = self.get_latest_data(bars)
+        else: # else we have cached the data already
+            data = data_type
         timestamps = [bar['timestamp'] for bar in bars]
         # Add the base rectangle shape
         for range_item in data:
