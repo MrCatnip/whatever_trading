@@ -5,6 +5,7 @@ from typing import List
 import toolbox.fib_retrace
 import toolbox.ma_ribbon
 import toolbox.range, toolbox.ichimoku
+import toolbox.vol_profile
 
 
 def __get__tool(tool_name: ToolName):
@@ -16,6 +17,8 @@ def __get__tool(tool_name: ToolName):
         return toolbox.fib_retrace.FibonacciRetracement()
     elif(tool_name == "MARibbon"):
         return toolbox.ma_ribbon.MARibbon()
+    elif(tool_name == "VolumeProfile"):
+        return toolbox.vol_profile.VolumeProfile()
     else:
         raise ValueError(f"Invalid tool name: {tool_name}")
 
