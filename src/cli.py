@@ -22,16 +22,16 @@ def cli():
 
 @cli.command()
 def fetchall():
-    ticker = "BTC"
-    symbol = get_symbol(ticker)
-    for timeframe in TIMEFRAMES:
-        print(f'Fetching for {symbol} - {timeframe}...')
-        client = AlpacaInterface(symbol, timeframe)
-        bars = client.fetch()
-        file_name = get_file_name(ticker, timeframe)
-        with open(file_name, "w") as file:
-            json.dump([bar for bar in bars], file, indent=4)
-        print('Done!')
+    for ticker in TICKERS:
+        symbol = get_symbol(ticker)
+        for timeframe in TIMEFRAMES:
+            print(f'Fetching for {symbol} - {timeframe}...')
+            client = AlpacaInterface(symbol, timeframe)
+            bars = client.fetch()
+            file_name = get_file_name(ticker, timeframe)
+            with open(file_name, "w") as file:
+                json.dump([bar for bar in bars], file, indent=4)
+            print('Done!')
 
 
 @cli.command()
