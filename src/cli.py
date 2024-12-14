@@ -4,15 +4,9 @@ from viz import look_at_this_graph
 import json
 from data_types import BarData, TimeframeString, ToolName
 from typing import List
+from config import LOOKBACK_PERIOD, TICKERS, TIMEFRAMES, TOOL_NAMES
 import os
 
-TIMEFRAMES: List[TimeframeString] = [
-    # "1M", "1W", "1D", "4H", "1H", "30m", "15m", "1m"
-    "1D"
-]
-TICKERS = ["BTC"]
-LOOKBACK_PERIOD = 20000
-TOOL_NAMES: List[ToolName] = ['Range', 'Ichimoku', 'FibonacciRetracement']
 
 @click.group()
 def cli():
