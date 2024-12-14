@@ -2,7 +2,7 @@ import click
 from alpaca_interface import AlpacaInterface
 from viz import look_at_this_graph
 import json
-from data_types import BarData, TimeframeString, ToolName
+from data_types import BarData, TimeframeString
 from typing import List
 from config import LOOKBACK_PERIOD, TICKERS, TIMEFRAMES, TOOL_NAMES
 import os
