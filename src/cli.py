@@ -12,7 +12,7 @@ TIMEFRAMES: List[TimeframeString] = [
 ]
 TICKERS = ["BTC"]
 LOOKBACK_PERIOD = 20000
-TOOL_NAMES: List[ToolName] = ['Range']
+TOOL_NAMES: List[ToolName] = ['Range', 'Ichimoku']
 
 @click.group()
 def cli():

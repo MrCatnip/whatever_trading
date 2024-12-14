@@ -2,13 +2,14 @@ from data_types import BarData, ToolName
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from typing import List
-import toolbox
-import toolbox.range
+import toolbox.range, toolbox.ichimoku
 
 
 def __get__tool(tool_name: ToolName):
     if (tool_name == 'Range'):
         return toolbox.range.Range()
+    elif (tool_name == "Ichimoku"):
+        return toolbox.ichimoku.Ichimoku()
     else:
         raise ValueError(f"Invalid tool name: {tool_name}")
 

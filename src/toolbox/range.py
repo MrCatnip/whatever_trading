@@ -1,4 +1,4 @@
-from data_types import BarData, Range
+from data_types import BarData
 from typing import Literal, List, TypedDict
 from toolbox.tool_base import ToolBase
 
@@ -11,6 +11,12 @@ MAX_POINTS_DISTANCE = 400
 MIN_ZONE_SIZE = 5  # min price difference in % between closing prices forming ranges
 MAX_ZONE_SIZE = 15  # max price difference in % between closing prices forming ranges
 
+class Range(TypedDict):
+    breach_price: float
+    entry_price: float
+    starting_index: int
+    ending_index: int
+    validated_index: int
 
 class ExtremePoint(TypedDict):
     price: float
@@ -51,11 +57,13 @@ class Range(ToolBase):
             ending_index = range_item['ending_index']
             validated_index = range_item['validated_index']
             # Determine rectangle color based on breach/entry price comparison
-            color = 'rgba(0, 255, 0, 0.2)' if breach_price >= entry_price else 'rgba(255, 0, 0, 0.2)'
-            intense_color = 'rgba(0, 255, 0, 0.3)' if breach_price >= entry_price else 'rgba(255, 0, 0, 0.3)'
+            type: LevelType = "Resistance" if breach_price >= entry_price else "Support"
+            color = 'rgba(0, 255, 0, 0.2)' if type == 'Resistance' else 'rgba(255, 0, 0, 0.2)'
+            intense_color = 'rgba(0, 255, 0, 0.3)' if type == 'Resistance' else 'rgba(255, 0, 0, 0.3)'
             even_more_intense_color = 'rgba(0, 48, 143, 0.3)'
             fig.add_shape(
                 type="rect",
+                name=f"Potential {type} Range",
                 x0=timestamps[starting_index],  # Start time (adjust as needed)
                 x1=timestamps[ending_index],  # End time (adjust as needed)
                 y0=min(breach_price, entry_price),  # Lower bound of the range
@@ -66,6 +74,7 @@ class Range(ToolBase):
             # Add the intense rectangle shape
             fig.add_shape(
                 type="rect",
+                name=f"Pending validation {type} Range",
                 x0=timestamps[ending_index],  # Start from the ending_index
                 x1=timestamps[validated_index],  # End at the last timestamp
                 y0=min(breach_price, entry_price),  # Lower bound of the range
@@ -76,6 +85,7 @@ class Range(ToolBase):
             # Add the even more intense rectangle shape
             fig.add_shape(
                 type="rect",
+                name=f"Validated {type} Range",
                 x0=timestamps[validated_index],  # Start from the ending_index
                 x1=timestamps[-1],  # End at the last timestamp
                 y0=min(breach_price, entry_price),  # Lower bound of the range
