@@ -3,6 +3,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from typing import List
 import toolbox.fib_retrace
+import toolbox.ma_ribbon
 import toolbox.range, toolbox.ichimoku
 
 
@@ -13,6 +14,8 @@ def __get__tool(tool_name: ToolName):
         return toolbox.ichimoku.Ichimoku()
     elif(tool_name == "FibonacciRetracement"):
         return toolbox.fib_retrace.FibonacciRetracement()
+    elif(tool_name == "MARibbon"):
+        return toolbox.ma_ribbon.MARibbon()
     else:
         raise ValueError(f"Invalid tool name: {tool_name}")
 
