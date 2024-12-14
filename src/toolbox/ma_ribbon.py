@@ -3,6 +3,7 @@ from toolbox.tool_base import ToolBase
 import plotly.graph_objects as go
 
 MA_PERIODS = [10, 20, 30]
+MA_PERIODS.sort()
 
 class MARibbon(ToolBase):
     def get_latest_data(self, bars):
@@ -10,7 +11,6 @@ class MARibbon(ToolBase):
 
     # Define the function to calculate moving averages
     def get_historical_data(self, bars) -> Tuple[List[List[Optional[float]]], List[int]]:
-        MA_PERIODS.sort()
         ma_data: List[List[Optional[float]]] = [[] for _ in MA_PERIODS]  # Initialize a list for each MA period
 
         # Iterate over each MA period
@@ -31,10 +31,8 @@ class MARibbon(ToolBase):
             ma_data, MA_PERIODS = self.get_historical_data(bars)
         elif data_type == "Latest":
             ma_data = self.get_latest_data(bars)
-            MA_PERIODS = [10, 20, 30]  # Default periods for Latest data
         else:
             ma_data = data_type
-            MA_PERIODS = [10, 20, 30]  # Default periods if data_type is passed directly
 
         timestamps = [bar['timestamp'] for bar in bars]
 
