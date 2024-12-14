@@ -1,8 +1,7 @@
 from typing import List
 from toolbox.tool_base import ToolBase
+from toolbox.fib_retrace.config import FIB_LEVELS
 import plotly.graph_objects as go
-
-FIB_LEVELS = [0, 23.6, 38.2, 50, 61.8, 78.6, 100]
 
 
 class FibonacciRetracement(ToolBase):

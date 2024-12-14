@@ -1,19 +1,13 @@
 from typing import List, Tuple
 from toolbox.tool_base import ToolBase
 import plotly.graph_objects as go
-
-LEVELS = [0, 20, 40, 60, 80, 100]
-LEVELS.sort()
-PLOT_BAR_RATIO = 3
-
+from toolbox.vol_profile.config import LEVELS, PLOT_BAR_RATIO 
 
 class VolumeProfile(ToolBase):
     def get_latest_data(self, bars):
         return super().get_latest_data(bars)
 
     def get_historical_data(self, bars) -> Tuple[List[float], float]:
-        # Sort LEVELS in ascending order
-        LEVELS.sort()
 
         # Find the highest and lowest points in the data
         lowest = min(bar['low'] for bar in bars)
@@ -69,17 +63,17 @@ class VolumeProfile(ToolBase):
             level_end = lowest + (LEVELS[i] / 100) * distance
             color = 'rgba(90, 34, 139, 0.2)'
             shape_width = int(max_shape_width*volume_profile[i-1])
-            if(shape_width):
+            if (shape_width):
                 fig.add_shape(
-                        type="rect",
-                        name=f"Validated {type} Range",
-                        x0=timestamps[-shape_width],  # Start from the ending_index
-                        x1=timestamps[-1],  # End at the last timestamp
-                        y0=level_start,  # Lower bound of the range
-                        y1=level_end,  # Upper bound of the range
-                        fillcolor=color,
-                        line={"width": 0},  # No border
-                    )
+                    type="rect",
+                    name=f"Validated {type} Range",
+                    x0=timestamps[-shape_width],  # Start from the ending_index
+                    x1=timestamps[-1],  # End at the last timestamp
+                    y0=level_start,  # Lower bound of the range
+                    y1=level_end,  # Upper bound of the range
+                    fillcolor=color,
+                    line={"width": 0},  # No border
+                )
             level_start = level_end
 
     def get_nr_of_subplots(self):

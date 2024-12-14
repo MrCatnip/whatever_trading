@@ -2,23 +2,23 @@ from data_types import BarData, ToolName
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from typing import List
-import toolbox.fib_retrace
-import toolbox.ma_ribbon
-import toolbox.range, toolbox.ichimoku
-import toolbox.vol_profile
+import toolbox.fib_retrace.fib_retrace
+import toolbox.ma_ribbon.ma_ribbon
+import toolbox.range.range, toolbox.ichimoku.ichimoku
+import toolbox.vol_profile.vol_profile
 
 
 def __get__tool(tool_name: ToolName):
     if (tool_name == 'Range'):
-        return toolbox.range.Range()
+        return toolbox.range.range.Range()
     elif (tool_name == "Ichimoku"):
-        return toolbox.ichimoku.Ichimoku()
+        return toolbox.ichimoku.ichimoku.Ichimoku()
     elif(tool_name == "FibonacciRetracement"):
-        return toolbox.fib_retrace.FibonacciRetracement()
+        return toolbox.fib_retrace.fib_retrace.FibonacciRetracement()
     elif(tool_name == "MARibbon"):
-        return toolbox.ma_ribbon.MARibbon()
+        return toolbox.ma_ribbon.ma_ribbon.MARibbon()
     elif(tool_name == "VolumeProfile"):
-        return toolbox.vol_profile.VolumeProfile()
+        return toolbox.vol_profile.vol_profile.VolumeProfile()
     else:
         raise ValueError(f"Invalid tool name: {tool_name}")
 

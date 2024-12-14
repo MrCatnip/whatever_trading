@@ -2,14 +2,6 @@ from typing import List, Optional, TypedDict
 from toolbox.tool_base import ToolBase
 import plotly.graph_objects as go
 
-# Ichimoku Constants
-LOOKBACK_PERIOD = 50
-MIN_POINTS_DISTANCE = LOOKBACK_PERIOD
-MAX_POINTS_DISTANCE = 400
-MIN_ZONE_SIZE = 5  # min price difference in % between closing prices forming ranges
-MAX_ZONE_SIZE = 15  # max price difference in % between closing prices forming ranges
-
-
 class IchimokuData(TypedDict):
     tenkan_sen: Optional[float]
     kijun_sen: Optional[float]

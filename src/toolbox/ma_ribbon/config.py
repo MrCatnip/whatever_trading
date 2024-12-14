@@ -1,0 +1,2 @@
+MA_PERIODS = [10, 20, 30]
+MA_PERIODS.sort()

@@ -1,15 +1,8 @@
 from data_types import BarData
 from typing import Literal, List, TypedDict
 from toolbox.tool_base import ToolBase
+from toolbox.range.config import LOOKBACK_PERIOD, MIN_POINTS_DISTANCE, MAX_POINTS_DISTANCE, MIN_ZONE_SIZE, MAX_ZONE_SIZE
 
-# period for higest/lowest closing price within LOOKBACK_PERIOD * 2 + 1 bars
-LOOKBACK_PERIOD = 50
-# min bars between closing prices forming ranges. must be at least LOOKBACK_PERIOD
-MIN_POINTS_DISTANCE = LOOKBACK_PERIOD
-# max bars between closing prices forming ranges. again, must be at least LOOKBACK_PERIOD
-MAX_POINTS_DISTANCE = 400
-MIN_ZONE_SIZE = 5  # min price difference in % between closing prices forming ranges
-MAX_ZONE_SIZE = 15  # max price difference in % between closing prices forming ranges
 
 class Range(TypedDict):
     breach_price: float
@@ -18,12 +11,14 @@ class Range(TypedDict):
     ending_index: int
     validated_index: int
 
+
 class ExtremePoint(TypedDict):
     price: float
     index: int
 
 
 LevelType = Literal["Resistance", "Support"]
+
 
 class Range(ToolBase):
     def get_latest_data(self, bars):
@@ -41,12 +36,12 @@ class Range(ToolBase):
         ranges = resistance_ranges + support_ranges
         return ranges
 
-    def add_to_fig(self, fig, bars, data_type = "Historical"):
+    def add_to_fig(self, fig, bars, data_type="Historical"):
         if data_type == "Historical":
             data = self.get_historical_data(bars)
         elif data_type == "Latest":
             data = self.get_latest_data(bars)
-        else: # else we have cached the data already
+        else:  # else we have cached the data already
             data = data_type
         timestamps = [bar['timestamp'] for bar in bars]
         # Add the base rectangle shape

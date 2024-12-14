@@ -1,10 +1,7 @@
 from typing import List, Tuple, Optional
 from toolbox.tool_base import ToolBase
 import plotly.graph_objects as go
-
-MA_PERIODS = [10, 20, 30]
-MA_PERIODS.sort()
-
+from toolbox.ma_ribbon.config import MA_PERIODS
 
 class MARibbon(ToolBase):
     def get_latest_data(self, bars):
