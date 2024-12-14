@@ -5,13 +5,16 @@ import plotly.graph_objects as go
 MA_PERIODS = [10, 20, 30]
 MA_PERIODS.sort()
 
+
 class MARibbon(ToolBase):
     def get_latest_data(self, bars):
         return super().get_latest_data(bars)
 
     # Define the function to calculate moving averages
     def get_historical_data(self, bars) -> Tuple[List[List[Optional[float]]], List[int]]:
-        ma_data: List[List[Optional[float]]] = [[] for _ in MA_PERIODS]  # Initialize a list for each MA period
+        ma_data: List[List[Optional[float]]] = [[]
+                                                # Initialize a list for each MA period
+                                                for _ in MA_PERIODS]
 
         # Iterate over each MA period
         for period_idx, period in enumerate(MA_PERIODS):
@@ -45,10 +48,10 @@ class MARibbon(ToolBase):
                 name=f'MA {MA_PERIODS[idx]}',
                 line=dict(width=2),
                 fill='tonexty' if idx > 0 else None,  # Fill between traces
-                fillcolor=f'rgba({255 - (idx * 50)}, {100 + (idx * 50)}, {255 - (idx * 30)}, 0.3)'  # Customize fill color
+                # Customize fill color
+                fillcolor=f'rgba({255 - (idx * 50)}, {100 + \
+                                                      (idx * 50)}, {255 - (idx * 30)}, 0.3)'
             ))
-
-        return fig
 
     def get_nr_of_subplots(self):
         return 0
