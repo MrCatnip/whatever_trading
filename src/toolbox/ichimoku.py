@@ -1,4 +1,3 @@
-from data_types import BarData
 from typing import List, Optional, TypedDict
 from toolbox.tool_base import ToolBase
 import plotly.graph_objects as go
@@ -23,7 +22,7 @@ class Ichimoku(ToolBase):
     def get_latest_data(self, bars):
         return super().get_latest_data(bars)
 
-    def get_historical_data(self, bars: List[BarData]) -> List[IchimokuData]:
+    def get_historical_data(self, bars) -> List[IchimokuData]:
         def calculate_high_low_average(data, period):
             if len(data) < period:
                 return None

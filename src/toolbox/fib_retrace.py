@@ -1,4 +1,3 @@
-from data_types import BarData
 from typing import List
 from toolbox.tool_base import ToolBase
 import plotly.graph_objects as go
@@ -10,7 +9,7 @@ class FibonacciRetracement(ToolBase):
     def get_latest_data(self, bars):
         return super().get_latest_data(bars)
 
-    def get_historical_data(self, bars: List[BarData]) -> List[float]:
+    def get_historical_data(self, bars) -> List[float]:
         max_close = max(bars, key=lambda bar: bar["close"])["close"]
         min_close = min(bars, key=lambda bar: bar['close'])["close"]
         fib_difference = max_close - min_close
