@@ -7,7 +7,7 @@ from typing import Optional
 
 @dataclass
 class MARibbonConfig:
-    periods: List[int] = field(default_factory=lambda: [10, 20, 30])
+    periods: List[int] = field(default_factory=lambda: [5, 20, 40, 50, 100, 200])
 
 
 class MARibbon(ToolBase):
