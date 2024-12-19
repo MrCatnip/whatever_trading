@@ -31,7 +31,6 @@ def fetchall():
 @cli.command()
 def plot():
     for ticker in TICKERS:
-        ticker = "BTC"
         symbol = get_symbol(ticker)
         for timeframe in TIMEFRAMES:
             print(f"Parsing data for {symbol} - {timeframe}...")
