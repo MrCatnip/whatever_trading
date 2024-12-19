@@ -7,6 +7,7 @@ from typing import List
 from config import LOOKBACK_PERIOD, TICKERS, TIMEFRAMES, TOOL_NAMES
 import os
 
+TOOL_NAMES = list(dict.fromkeys(TOOL_NAMES))
 
 @click.group()
 def cli():

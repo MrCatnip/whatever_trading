@@ -1,9 +1,30 @@
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from toolbox.tool_base import ToolBase
-import plotly.graph_objects as go
-from toolbox.vol_profile.config import LEVELS, PLOT_BAR_RATIO 
+from dataclasses import dataclass, field
+
+
+@dataclass
+class VolumeProfileConfig:
+    # % from lowest point to highest point
+    levels: List[float] = field(default_factory=lambda: [
+                                0, 20, 40, 60, 80, 100])
+    # >=1, I.E for val "3" the highest bar will take 1/3 of plot width
+    plot_bar_ratio: float = 3
+
 
 class VolumeProfile(ToolBase):
+    def __init__(self, config: Optional[VolumeProfileConfig] = None):
+        # Default configuration if none is provided
+        default_config = VolumeProfileConfig()
+
+        # Extract configuration values, falling back to defaults where necessary
+        config = config or default_config
+
+        self.levels = config.levels or default_config.levels
+        self.levels.sort()
+        self.plot_bar_ratio = config.plot_bar_ratio or default_config.plot_bar_ratio
+        self.plot_bar_ratio = max(self.plot_bar_ratio, 1)
+
     def get_latest_data(self, bars):
         return super().get_latest_data(bars)
 
@@ -18,7 +39,7 @@ class VolumeProfile(ToolBase):
         volume_profile = []
 
         # Initialize volume counters for each level range
-        level_volumes = [0] * (len(LEVELS) - 1)
+        level_volumes = [0] * (len(self.levels) - 1)
         distance = highest - lowest
         for bar in bars:
             bar_low = bar['low']
@@ -26,9 +47,9 @@ class VolumeProfile(ToolBase):
             bar_volume = bar['volume']
 
             # For each level range, check if the bar's high-low range intersects with it
-            for i in range(len(LEVELS) - 1):
-                level_start = lowest + (LEVELS[i] / 100) * distance
-                level_end = lowest + (LEVELS[i + 1] / 100) * distance
+            for i in range(len(self.levels) - 1):
+                level_start = lowest + (self.levels[i] / 100) * distance
+                level_end = lowest + (self.levels[i + 1] / 100) * distance
 
                 if bar_high >= level_start and bar_low <= level_end:
                     # The bar intersects this level range, add its volume to the corresponding level
@@ -57,10 +78,10 @@ class VolumeProfile(ToolBase):
         lowest = min(bar['low'] for bar in bars)
         highest = max(bar['high'] for bar in bars)
         distance = highest-lowest
-        max_shape_width = len(bars) // PLOT_BAR_RATIO
-        level_start = lowest + (LEVELS[0] / 100) * distance
-        for i in range(1, len(LEVELS)):
-            level_end = lowest + (LEVELS[i] / 100) * distance
+        max_shape_width = len(bars) // self.plot_bar_ratio
+        level_start = lowest + (self.levels[0] / 100) * distance
+        for i in range(1, len(self.levels)):
+            level_end = lowest + (self.levels[i] / 100) * distance
             color = 'rgba(90, 34, 139, 0.2)'
             shape_width = int(max_shape_width*volume_profile[i-1])
             if (shape_width):

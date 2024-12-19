@@ -1,10 +1,27 @@
-from typing import List
+from typing import List, Optional
 from toolbox.tool_base import ToolBase
-from toolbox.fib_retrace.config import FIB_LEVELS
 import plotly.graph_objects as go
+from dataclasses import dataclass, field
+
+
+@dataclass
+class FibonacciRetracementConfig:
+    # % from lowest point to highest point
+    levels: List[float] = field(default_factory=lambda: [0, 23.6, 38.2, 50, 61.8, 78.6, 100])
 
 
 class FibonacciRetracement(ToolBase):
+    def __init__(self, config: Optional[FibonacciRetracementConfig] = None):
+        # Default configuration if none is provided
+        default_config = FibonacciRetracementConfig()
+
+        # Extract configuration values, falling back to defaults where necessary
+        config = config or default_config
+
+        self.levels = config.levels or default_config.levels
+        self.levels.sort()
+
+
     def get_latest_data(self, bars):
         return super().get_latest_data(bars)
 
@@ -13,7 +30,7 @@ class FibonacciRetracement(ToolBase):
         min_close = min(bars, key=lambda bar: bar['close'])["close"]
         fib_difference = max_close - min_close
         fib_array = []
-        for level in FIB_LEVELS:
+        for level in self.levels:
             fib_array.append(min_close + level / 100 * fib_difference)
         return fib_array
 
@@ -34,7 +51,7 @@ class FibonacciRetracement(ToolBase):
                     y=[level, level],
                     mode="lines",
                     line=dict(dash="dash", color="gray"),
-                    name=f"Fib {FIB_LEVELS[i]}%",
+                    name=f"Fib {self.levels[i]}%",
                 )
             )
             i += 1

@@ -1,7 +1,8 @@
 from data_types import BarData
 from typing import Literal, List, TypedDict
 from toolbox.tool_base import ToolBase
-from toolbox.range.config import LOOKBACK_PERIOD, MIN_POINTS_DISTANCE, MAX_POINTS_DISTANCE, MIN_ZONE_SIZE, MAX_ZONE_SIZE
+from dataclasses import dataclass
+from typing import Optional
 
 
 class Range(TypedDict):
@@ -19,8 +20,36 @@ class ExtremePoint(TypedDict):
 
 LevelType = Literal["Resistance", "Support"]
 
+@dataclass
+class RangeConfig:
+    # looking for higest/lowest closing price within lookback_period * 2 + 1 bars
+    lookback_period: int = 50
+    # min bars between closing prices forming ranges. must be at least lookback_period
+    min_points_distance: int = 50
+    # max bars between closing prices forming ranges. must be at least lookback_period
+    max_points_distance: int = 400
+    min_zone_size: float = 5  # min price difference in % between closing prices forming ranges
+    max_zone_size: float = 15  # max price difference in % between closing prices forming ranges
+
 
 class Range(ToolBase):
+    def __init__(self, config: Optional[RangeConfig] = None):
+        # Default configuration if none is provided
+        default_config = RangeConfig()
+
+        # Extract configuration values, falling back to defaults where necessary
+        config = config or default_config
+
+        self.lookback_period = config.lookback_period or default_config.lookback_period
+        self.min_points_distance = config.min_points_distance or default_config.min_points_distance
+        self.min_points_distance = max(self.lookback_period, self.min_points_distance)
+        self.max_points_distance = config.max_points_distance or default_config.max_points_distance
+        self.max_points_distance = max(self.max_points_distance, self.min_points_distance)
+        self.min_zone_size = config.min_zone_size or default_config.min_zone_size
+        self.min_zone_size = max(self.min_zone_size, 0)
+        self.max_zone_size = config.max_zone_size or default_config.max_zone_size
+        self.max_zone_size = max(self.max_zone_size, self.min_zone_size)
+    
     def get_latest_data(self, bars):
         return super().get_latest_data(bars)
 
@@ -101,7 +130,7 @@ class Range(ToolBase):
         point_prev = reset_point
         point = reset_point
         potential_ranges: List[Range] = []
-        for i in range(LOOKBACK_PERIOD, len(bars) - LOOKBACK_PERIOD):
+        for i in range(self.lookback_period, len(bars) - self.lookback_period):
             close = bars[i]['close']
             if is_more_extreme(close, point['price']):
                 point = {
@@ -111,7 +140,7 @@ class Range(ToolBase):
                 right_offset = 0
             else:
                 right_offset += 1
-            if right_offset == LOOKBACK_PERIOD:
+            if right_offset == self.lookback_period:
                 if self.__is__potential_range(point, point_prev):
                     potential_ranges.append({
                         'breach_price': point['price'] if is_more_extreme(point['price'], point_prev['price']) else point_prev['price'],
@@ -129,16 +158,16 @@ class Range(ToolBase):
         points_distance = point['index'] - point_prev['index']
         points_difference = abs(
             (point['price'] - point_prev['price']) / point['price'] * 100)
-        return point_prev['index'] != 0 and points_distance >= MIN_POINTS_DISTANCE and points_distance <= MAX_POINTS_DISTANCE and points_difference >= MIN_ZONE_SIZE and points_difference <= MAX_ZONE_SIZE
+        return point_prev['index'] != 0 and points_distance >= self.min_points_distance and points_distance <= self.max_points_distance and points_difference >= self.min_zone_size and points_difference <= self.max_zone_size
 
     def __get_valid_ranges(self, bars: List[BarData], potential_ranges: List[Range], levelType: LevelType):
         valid_ranges: List[Range] = []
-        for i in range(LOOKBACK_PERIOD, len(bars)):
+        for i in range(self.lookback_period, len(bars)):
             bar = bars[i]
             j = 0
             while j < len(potential_ranges):
                 potential_range = potential_ranges[j]
-                if i > potential_range['ending_index'] + LOOKBACK_PERIOD and self.__is_valid_touch(bar, potential_range, levelType):
+                if i > potential_range['ending_index'] + self.lookback_period and self.__is_valid_touch(bar, potential_range, levelType):
                     valid_ranges.append(potential_ranges.pop(j))
                     valid_ranges[-1]['validated_index'] = i
                 else:
