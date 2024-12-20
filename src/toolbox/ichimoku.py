@@ -2,6 +2,7 @@ from typing import List, Optional, TypedDict
 from toolbox.tool_base import ToolBase
 import plotly.graph_objects as go
 
+
 class IchimokuData(TypedDict):
     tenkan_sen: Optional[float]
     kijun_sen: Optional[float]
@@ -11,10 +12,13 @@ class IchimokuData(TypedDict):
 
 
 class Ichimoku(ToolBase):
+    def __init__(self):
+        self.data: List[IchimokuData] = []
+
     def get_latest_data(self, bars):
         return super().get_latest_data(bars)
 
-    def get_historical_data(self, bars) -> List[IchimokuData]:
+    def calculate_historical_data(self, bars) -> List[IchimokuData]:
         def calculate_high_low_average(data, period):
             if len(data) < period:
                 return None
@@ -50,13 +54,13 @@ class Ichimoku(ToolBase):
                 "senkou_span_b": senkou_span_b,
                 "chikou_span": chikou_span,
             })
-
-        return ichimoku_data
+        self.data = ichimoku_data
+        return self.data
 
     def add_to_fig(self, fig, bars, data_type="Historical"):
         # Get the pre-calculated data
         if data_type == "Historical":
-            ichimoku_data = self.get_historical_data(bars)
+            ichimoku_data = self.calculate_historical_data(bars)
         elif data_type == "Latest":
             ichimoku_data = self.get_latest_data(bars)
         else:

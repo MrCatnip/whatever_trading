@@ -13,7 +13,7 @@ class ToolBase(ABC):
         pass
 
     @abstractmethod
-    def get_historical_data(self, bars: List[BarData]):
+    def calculate_historical_data(self, bars: List[BarData]):
         """Retrieve historical data."""
         pass
 

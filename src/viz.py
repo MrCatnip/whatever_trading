@@ -2,12 +2,12 @@ from data_types import BarData
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from typing import List
-from toolbox import FibonacciRetracement, MARibbon, Range, Ichimoku, VolumeProfile, ToolName
+from toolbox import FibonacciRetracement, MARibbon, PotentialRange, Ichimoku, VolumeProfile, ToolName
 
 
 def __get__tool(tool_name: ToolName):
     if (tool_name == 'Range'):
-        return Range()
+        return PotentialRange()
     elif (tool_name == "Ichimoku"):
         return Ichimoku()
     elif (tool_name == "FibonacciRetracement"):

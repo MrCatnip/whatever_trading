@@ -24,11 +24,12 @@ class VolumeProfile(ToolBase):
         self.levels.sort()
         self.plot_bar_ratio = config.plot_bar_ratio or default_config.plot_bar_ratio
         self.plot_bar_ratio = max(self.plot_bar_ratio, 1)
+        self.data = Tuple[List[float], float]
 
     def get_latest_data(self, bars):
         return super().get_latest_data(bars)
 
-    def get_historical_data(self, bars) -> Tuple[List[float], float]:
+    def calculate_historical_data(self, bars) -> Tuple[List[float], float]:
 
         # Find the highest and lowest points in the data
         lowest = min(bar['low'] for bar in bars)
@@ -62,16 +63,16 @@ class VolumeProfile(ToolBase):
         for volume in level_volumes:
             volume_profile.append((volume / reference_volume)
                                   if reference_volume else 0)
-
-        return volume_profile, reference_volume
+        self.data = volume_profile, reference_volume
+        return self.data
 
     def add_to_fig(self, fig, bars, data_type="Historical"):
         if data_type == "Historical":
-            volume_profile, reference_volume = self.get_historical_data(bars)
+            volume_profile, reference_volume = self.calculate_historical_data(bars)
         elif data_type == "Latest":
             volume_profile, reference_volume = self.get_latest_data(bars)
         else:
-            volume_profile, reference_volume = data_type
+            volume_profile, reference_volume = self.data
 
         timestamps = [bar['timestamp'] for bar in bars]
         # Find the highest and lowest points in the data

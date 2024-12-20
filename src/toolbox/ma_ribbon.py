@@ -20,12 +20,13 @@ class MARibbon(ToolBase):
 
         self.periods = config.periods or default_config.periods
         self.periods.sort()
+        self.data: Tuple[List[List[Optional[float]]], List[int]] = []
 
     def get_latest_data(self, bars):
         return super().get_latest_data(bars)
 
     # Define the function to calculate moving averages
-    def get_historical_data(self, bars) -> Tuple[List[List[Optional[float]]], List[int]]:
+    def calculate_historical_data(self, bars) -> Tuple[List[List[Optional[float]]], List[int]]:
         ma_data: List[List[Optional[float]]] = [[]
                                                 # Initialize a list for each MA period
                                                 for _ in self.periods]
@@ -40,12 +41,12 @@ class MARibbon(ToolBase):
                     window = bars[i + 1 - period:i + 1]
                     average = sum(bar['close'] for bar in window) / period
                     ma_data[period_idx].append(average)
-
-        return ma_data, self.periods
+        self.data = ma_data, self.periods
+        return self.data
 
     def add_to_fig(self, fig, bars, data_type="Historical"):
         if data_type == "Historical":
-            ma_data, self.periods = self.get_historical_data(bars)
+            ma_data, self.periods = self.calculate_historical_data(bars)
         elif data_type == "Latest":
             ma_data = self.get_latest_data(bars)
         else:
