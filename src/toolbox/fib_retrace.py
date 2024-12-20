@@ -51,15 +51,17 @@ class FibonacciRetracement(ToolBase):
 
     def add_to_fig(self, fig, bars, data_type="Historical"):
         if data_type == "Historical":
-            fib_array = self.calculate_historical_data(bars)
+            self.calculate_historical_data(bars)
+            data = self.fib_levels
         elif data_type == "Latest":
-            fib_array = self.get_latest_data(bars)
+            self.get_latest_data(bars)
+            data = self.fib_levels
         else:
-            fib_array = data_type
+            data = data_type
         timestamps = [bar['timestamp'] for bar in bars]
         # Add Fibonacci levels to the figure
         i = 0
-        for level in fib_array:
+        for level in data:
             fig.add_trace(
                 go.Scatter(
                     x=[timestamps[0], timestamps[-1]],
